@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ஆனஸ்ட்ராஜ்</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--page:#e9dcc3;--ptext:#3b2a1a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#2b2217;--ptext:#f3e6cf}}
+:root[data-theme="dark"]{--page:#2b2217;--ptext:#f3e6cf}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--page);color:var(--ptext);font-family:"Noto Sans Tamil",system-ui,sans-serif;padding-bottom:90px}
+button{font:inherit;cursor:pointer;border:0}
+h1{margin:0;font-size:26px;font-weight:800;letter-spacing:.5px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;max-width:1050px;margin:0 auto;padding:14px 14px 4px}
+.sbtn{background:#22332b;color:#ffd75e;border:3px solid #7a5230;border-radius:12px;padding:9px 14px;font-weight:800;font-size:16px}
+.veil{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:20;justify-content:flex-end}
+.veil.show{display:flex}
+.drawer{background:#22332b;color:#f6f1e3;width:min(430px,100%);height:100%;overflow:auto;padding:16px 16px calc(20px + env(safe-area-inset-bottom,0px));border-left:8px solid #7a5230}
+.dh{display:flex;justify-content:space-between;align-items:center;padding-top:env(safe-area-inset-top,0px)}
+.dh h2{margin:0;font-size:21px;color:#ffd75e}
+.xx{width:40px;height:40px;border-radius:50%;background:transparent;border:2px solid #f6f1e3;color:#f6f1e3;font-size:18px}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.sum div{background:rgba(255,255,255,.08);border-radius:12px;padding:10px;text-align:center}
+.sum small{display:block;opacity:.8;font-size:14px}
+.sum b{font-size:26px;color:#ffd75e}
+.dt{margin:16px 0 6px;font-weight:700;color:#ffd75e;border-bottom:2px dashed rgba(246,241,227,.35);padding-bottom:5px}
+.sr{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid rgba(246,241,227,.12);font-size:17px}
+.sr small{opacity:.75;font-size:14px;display:block}
+.sr b{white-space:nowrap}
+.bl{padding:10px 0;border-bottom:1px solid rgba(246,241,227,.12)}
+.bl .h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700}
+.bl .d{font-size:14px;opacity:.8;margin-top:3px;line-height:1.4}
+.del{background:transparent;border:2px solid #ff8f84;color:#ff8f84;border-radius:8px;padding:3px 9px;font-weight:700;font-size:14px}
+.none{opacity:.7;padding:10px 0}
+.rm{background:transparent;border:2px solid #ff8f84;color:#ff8f84;border-radius:8px;padding:4px 8px;font-size:14px;font-weight:700}
+.addb{width:100%;margin:12px 0 6px;padding:13px;border-radius:12px;background:transparent;border:3px dashed #ffd75e;color:#ffd75e;font-weight:800;font-size:18px}
+.addf{display:none;gap:8px;flex-wrap:wrap;padding:6px 0 10px}
+.addf.show{display:flex}
+.addf input{font:inherit;font-size:18px;padding:11px;border-radius:10px;border:2px solid rgba(246,241,227,.4);background:rgba(255,255,255,.08);color:#f6f1e3}
+.addf input:focus{outline:none;border-color:#ffd75e}
+#an{flex:2;min-width:140px}
+#ap{flex:1;min-width:90px}
+#addok{flex:1 1 100%;padding:13px;border-radius:10px;background:#ffd75e;color:#22332b;font-weight:800;font-size:18px}
+.wrap{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;max-width:1050px;margin:0 auto;padding:12px 14px;align-items:start}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}}
+
+/* chalk menu board */
+.board{background:#22332b;color:#f6f1e3;border:10px solid #7a5230;border-radius:12px;padding:14px 14px 8px;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.board h2{margin:0 0 6px;text-align:center;font-size:20px;color:#ffd75e;font-weight:700;border-bottom:2px dashed rgba(246,241,227,.35);padding-bottom:8px}
+.it{display:flex;align-items:center;gap:8px;padding:11px 0;border-bottom:1px solid rgba(246,241,227,.12)}
+.it:last-child{border-bottom:0}
+.lead{flex:1;display:flex;align-items:baseline;gap:6px;min-width:0}
+.lead .n{font-size:18px;font-weight:600;line-height:1.35}
+.lead .d{flex:1;border-bottom:2px dotted rgba(246,241,227,.35);min-width:12px;transform:translateY(-4px)}
+.lead .p{font-weight:800;color:#ffd75e;font-size:19px;white-space:nowrap}
+.ctl{display:flex;align-items:center;gap:6px}
+.pl{width:46px;height:46px;border-radius:50%;background:#ffd75e;color:#22332b;font-size:30px;font-weight:800;line-height:1;box-shadow:0 3px 0 #b8952a}
+.pl:active{transform:translateY(3px);box-shadow:none}
+.mi{width:38px;height:38px;border-radius:50%;background:transparent;border:2px solid #ff8f84;color:#ff8f84;font-size:24px;font-weight:800;line-height:1;visibility:hidden}
+.q{min-width:24px;text-align:center;font-size:20px;font-weight:800;visibility:hidden}
+.it.on .mi,.it.on .q{visibility:visible}
+.it.on .n{color:#ffd75e}
+
+/* paper receipt */
+.paper{--zz:10px;background:#fffdf6;color:#2a2118;padding:26px 16px 30px;position:relative;box-shadow:0 6px 16px rgba(0,0,0,.25);
+ -webkit-mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/14px 100%;
+ mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/14px 100%}
+.paper h2{margin:0 0 10px;text-align:center;font-size:20px;letter-spacing:3px;border-bottom:2px dashed #b9ae98;padding-bottom:10px}
+.lb{font-weight:700;font-size:15px;margin:10px 0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:#f1eadb;border:2px solid #d8ccb4;border-radius:8px;padding:7px 10px;font-weight:700;font-size:16px;color:#2a2118}
+.chip.on{background:#2a2118;color:#fffdf6;border-color:#2a2118}
+#given{width:100%;margin-top:8px;font:inherit;font-size:22px;font-weight:800;padding:10px;border:2px dashed #b9ae98;border-radius:8px;background:#fff;color:#2a2118;text-align:center}
+#given:focus{outline:none;border-color:#2a2118}
+.row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px dotted #b9ae98;font-size:17px}
+.row small{color:#6d6250;font-size:14px}
+.row b{font-family:"Courier New",monospace;font-size:18px}
+.empty{color:#6d6250;padding:8px 0}
+.tot{display:flex;justify-content:space-between;font-size:26px;font-weight:800;padding:12px 0 4px;border-top:3px double #2a2118;margin-top:10px}
+.tot span:last-child{font-family:"Courier New",monospace}
+.bal{display:flex;justify-content:space-between;font-size:21px;font-weight:800;padding:6px 0}
+.bal span:last-child{font-family:"Courier New",monospace}
+.bal.pos span:last-child{color:#157a43}
+.bal.neg span:last-child{color:#c22b20}
+.new{width:100%;margin-top:12px;padding:14px;border-radius:10px;background:#2a2118;color:#fffdf6;font-weight:800;font-size:18px}
+
+.bar{position:fixed;left:0;right:0;bottom:0;background:#22332b;color:#f6f1e3;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:center;z-index:5;border-top:4px solid #7a5230}
+@media(min-width:821px){.bar{display:none}}
+.bar small{display:block;font-size:13px;opacity:.8}
+.bar b{font-size:26px;color:#ffd75e}
+.bar a{background:#ffd75e;color:#22332b;text-decoration:none;font-weight:800;padding:12px 18px;border-radius:12px;font-size:17px}
+
+.fab{position:fixed;right:16px;bottom:calc(92px + env(safe-area-inset-bottom,0px));width:72px;height:72px;border-radius:50%;background:#e8590c;color:#fff;font-size:34px;z-index:7;box-shadow:0 5px 14px rgba(0,0,0,.4);border:4px solid #fff7ec}
+.fab.on{background:#d1342a;animation:pl 1.2s infinite}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(209,52,42,.6)}100%{box-shadow:0 0 0 22px rgba(209,52,42,0)}}
+.vs{position:fixed;left:12px;right:98px;bottom:calc(98px + env(safe-area-inset-bottom,0px));background:#22332b;color:#f6f1e3;border:3px solid #7a5230;border-radius:14px;padding:10px 12px;z-index:7;display:none;align-items:center;gap:8px;font-size:17px;line-height:1.35}
+.vs.show{display:flex}
+.vs #vt{flex:1}
+.vs.ok #vt{color:#7be3a4}
+.vs.bad #vt{color:#ff9a90}
+.vs button{background:#ffd75e;color:#22332b;border-radius:8px;padding:6px 10px;font-weight:800;font-size:14px}
+@media(min-width:821px){.fab{bottom:24px}.vs{bottom:30px;left:auto;width:420px}}
+
+.fab2{position:fixed;right:28px;bottom:calc(174px + env(safe-area-inset-bottom,0px));width:52px;height:52px;border-radius:50%;background:#22332b;color:#ffd75e;font-size:24px;z-index:7;border:3px solid #7a5230;box-shadow:0 4px 10px rgba(0,0,0,.35)}
+.tb{position:fixed;left:12px;right:98px;bottom:calc(98px + env(safe-area-inset-bottom,0px));display:none;gap:6px;z-index:8}
+.tb.show{display:flex}
+.tb input{flex:1;min-width:0;font:inherit;font-size:18px;padding:12px;border-radius:12px;border:3px solid #ffd75e;background:#fffdf6;color:#2a2118}
+.tb button{background:#ffd75e;color:#22332b;font-weight:800;border-radius:12px;padding:0 14px;font-size:16px}
+body.tbon .vs{bottom:calc(166px + env(safe-area-inset-bottom,0px))}
+@media(min-width:821px){.fab2{bottom:108px}.tb{bottom:30px;left:auto;width:420px}body.tbon .vs{bottom:100px}}
+</style>
+</head>
+<body>
+<div class="top"><h1>☕ ஆனஸ்ட்ராஜ்</h1><button class="sbtn" id="sbtn">📊 இன்றைய விற்பனை</button></div>
+<div class="wrap">
+  <div class="board"><h2>~ மெனு ~</h2><div id="menu"></div>
+    <button class="addb" id="addb">＋ புது பொருள் சேர்</button>
+    <div class="addf" id="addf">
+      <input id="an" type="text" placeholder="பொருள் பெயர்">
+      <input id="ap" type="number" inputmode="numeric" min="0" placeholder="விலை ₹">
+      <button id="addok">✔ சேர்</button>
+    </div></div>
+  <div class="paper" id="bill">
+    <h2>BILL</h2>
+    <div class="lb">Customer கொடுத்த ரூபாய்</div>
+    <div class="chips" id="chips"></div>
+    <input id="given" type="number" inputmode="numeric" min="0" placeholder="₹ வேறு தொகை">
+    <div class="lb">வாங்கிய பொருட்கள்</div>
+    <div id="lines"></div>
+    <div class="tot"><span>மொத்தம்</span><span id="total">₹ 0</span></div>
+    <div class="bal" id="bal"><span>திருப்பி கொடுக்க</span><span id="balv">₹ 0</span></div>
+    <button class="new" id="new">✔ முடிந்தது - புது பில்</button>
+  </div>
+</div>
+<button class="fab" id="mic" aria-label="Voice billing">🎤</button>
+<button class="fab2" id="kb" aria-label="Keyboard voice">⌨️</button>
+<div class="tb" id="tb"><input id="ti" type="text" placeholder="Keyboard la 🎤 tap panni pesunga"><button id="tg">சேர்</button></div>
+<div class="vs" id="vs"><span id="vt"></span><button id="vl">தமிழ்</button></div>
+<div class="veil" id="sveil"><div class="drawer">
+  <div class="dh"><h2>📊 இன்றைய விற்பனை</h2><button class="xx" id="sx" aria-label="மூடு">✕</button></div>
+  <div class="sum"><div><small>மொத்த விற்பனை</small><b id="sT">₹ 0</b></div><div><small>பில் எண்ணிக்கை</small><b id="sC">0</b></div></div>
+  <div class="dt">பொருள் வாரியாக</div><div id="sItems"></div>
+  <div class="dt">இன்றைய பில்கள்</div><div id="sBills"></div>
+</div></div>
+<div class="bar"><div><small>மொத்தம்</small><b id="bt">₹ 0</b></div><a href="#bill">பில் பார் ▾</a></div>
+
+<script>
+var BASE=[
+["1 இட்லி",8],["வடை",7],["பூரி செட்",30],["பொங்கல்",30],["1 தோசை",20],["2 இடியாப்பம்",25],
+["டீ",12],["டீ அரை பார்சல்",25],["டீ 1 பார்சல்",40],["காபி",15],
+["காபி அரை பார்சல்",30],["காபி 1 பார்சல்",50],["Boost (பூஸ்ட்)",15],
+["Horlicks (ஹார்லிக்ஸ்)",15],["பால்",15],["1 சப்பாத்தி",10],["புட்டு",20],
+["பயறு",20],["1 கொழுக்கட்டை",5],["1 சாப்பாடு",70],["தக்காளி சாதம்",40],
+["தயிர் சாதம்",40],["புளி சாதம்",40],["முறுக்கு",5],["பிஸ்கட்",5],["பிஸ்கட்",10],
+["தண்ணீர் கேன் 1/2 லிட்டர்",10],["தண்ணீர் கேன் 1 லிட்டர்",20],["தண்ணீர் கேன் 2 லிட்டர்",35]
+];
+var CUSTOM=[];
+try{CUSTOM=JSON.parse(localStorage.getItem('custom_v1')||'[]')}catch(e){}
+function saveCustom(){try{localStorage.setItem('custom_v1',JSON.stringify(CUSTOM))}catch(e){}}
+var ITEMS=BASE.concat(CUSTOM);
+var CH=[10,20,50,100,200,500];
+var qty=ITEMS.map(function(){return 0});
+var menu=document.getElementById('menu'),lines=document.getElementById('lines'),given=document.getElementById('given');
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+function buildMenu(){
+  menu.textContent='';
+  ITEMS.forEach(function(it,i){
+    var r=el('div','it');r.id='i'+i;
+    var l=el('div','lead');l.appendChild(el('span','n',it[0]));l.appendChild(el('span','d'));l.appendChild(el('span','p','₹'+it[1]));
+    r.appendChild(l);
+    if(i>=BASE.length){
+      var rm=el('button','rm','🗑');rm.setAttribute('aria-label','பொருளை நீக்கு');
+      rm.onclick=function(){
+        if(rm.getAttribute('data-c')!=='1'){rm.setAttribute('data-c','1');rm.textContent='நீக்கு?';return}
+        ITEMS.splice(i,1);CUSTOM.splice(i-BASE.length,1);qty.splice(i,1);saveCustom();buildMenu();render()};
+      r.appendChild(rm);
+    }
+    var c=el('div','ctl');
+    var m=el('button','mi','−');m.setAttribute('aria-label','குறை');m.onclick=function(){chg(i,-1)};
+    var q=el('span','q','0');q.id='q'+i;
+    var p=el('button','pl','+');p.setAttribute('aria-label','சேர்');p.onclick=function(){chg(i,1)};
+    c.appendChild(m);c.appendChild(q);c.appendChild(p);r.appendChild(c);menu.appendChild(r);
+  });
+}
+buildMenu();
+var addf=document.getElementById('addf'),an=document.getElementById('an'),ap=document.getElementById('ap');
+document.getElementById('addb').onclick=function(){addf.className=addf.className==='addf show'?'addf':'addf show';an.focus()};
+document.getElementById('addok').onclick=function(){
+  var n=an.value.trim(),p=parseFloat(ap.value);
+  if(!n||isNaN(p)||p<0){(n?ap:an).focus();return}
+  ITEMS.push([n,p]);CUSTOM.push([n,p]);qty.push(0);saveCustom();
+  an.value='';ap.value='';buildMenu();render();
+  menu.lastChild.scrollIntoView({block:'center'})};
+CH.forEach(function(v){var c=el('button','chip','₹'+v);c.onclick=function(){given.value=v;render()};document.getElementById('chips').appendChild(c)});
+function chg(i,d){qty[i]=Math.max(0,qty[i]+d);render()}
+function render(){
+  var total=0,any=false;lines.textContent='';
+  ITEMS.forEach(function(it,i){
+    document.getElementById('q'+i).textContent=qty[i];
+    document.getElementById('i'+i).className='it'+(qty[i]?' on':'');
+    if(qty[i]){any=true;var a=qty[i]*it[1];total+=a;
+      var r=el('div','row'),l=el('div','');
+      l.appendChild(document.createTextNode(it[0]));l.appendChild(el('br'));l.appendChild(el('small','',qty[i]+' × ₹'+it[1]));
+      r.appendChild(l);r.appendChild(el('b','','₹'+a));lines.appendChild(r);}
+  });
+  if(!any)lines.appendChild(el('div','empty','பொருள் எதுவும் இல்லை'));
+  document.getElementById('bt').textContent='₹ '+total;
+  document.getElementById('total').textContent='₹ '+total;
+  var g=parseFloat(given.value),b=document.getElementById('bal'),bv=document.getElementById('balv');
+  var cs=document.getElementById('chips').children;
+  for(var k=0;k<cs.length;k++)cs[k].className='chip'+(g===CH[k]?' on':'');
+  if(isNaN(g)){b.className='bal';b.firstChild.textContent='திருப்பி கொடுக்க';bv.textContent='₹ 0';return}
+  var d=g-total;
+  if(d<0){b.className='bal neg';b.firstChild.textContent='இன்னும் வாங்க';bv.textContent='₹ '+(-d)}
+  else{b.className='bal pos';b.firstChild.textContent='திருப்பி கொடுக்க';bv.textContent='₹ '+d}
+}
+given.addEventListener('input',render);
+var SALES=[];
+try{SALES=JSON.parse(localStorage.getItem('sales_v1')||'[]')}catch(e){}
+function saveSales(){try{localStorage.setItem('sales_v1',JSON.stringify(SALES))}catch(e){}}
+function dk(t){var d=new Date(t);return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()}
+function renderSales(){
+  var today=dk(Date.now()),list=SALES.filter(function(b){return dk(b.t)===today}),sum=0,agg={},order=[];
+  list.forEach(function(b){sum+=b.total;b.items.forEach(function(x){
+    var k=x[0]+'|'+x[1];if(!agg[k]){agg[k]={n:x[0],p:x[1],q:0,a:0};order.push(k)}
+    agg[k].q+=x[2];agg[k].a+=x[1]*x[2]})});
+  document.getElementById('sT').textContent='₹ '+sum;
+  document.getElementById('sC').textContent=list.length;
+  var si=document.getElementById('sItems');si.textContent='';
+  if(!order.length)si.appendChild(el('div','none','இன்னும் விற்பனை இல்லை'));
+  order.forEach(function(k){var g=agg[k],r=el('div','sr'),l=el('div','');
+    l.appendChild(document.createTextNode(g.n));l.appendChild(el('small','','₹'+g.p+' × '+g.q));
+    r.appendChild(l);r.appendChild(el('b','','₹'+g.a));si.appendChild(r)});
+  var sb=document.getElementById('sBills');sb.textContent='';
+  if(!list.length)sb.appendChild(el('div','none','பில் எதுவும் இல்லை'));
+  list.slice().reverse().forEach(function(b){
+    var w=el('div','bl'),h=el('div','h');
+    var tm=new Date(b.t).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    h.appendChild(el('span','',tm+' — ₹'+b.total));
+    var d=el('button','del','✕ அழி');
+    d.onclick=function(){
+      if(d.getAttribute('data-c')!=='1'){d.setAttribute('data-c','1');d.textContent='உறுதியா?';return}
+      SALES=SALES.filter(function(x){return x!==b&&x.t!==b.t});saveSales();renderSales()};
+    h.appendChild(d);w.appendChild(h);
+    w.appendChild(el('div','d',b.items.map(function(x){return x[0]+' × '+x[2]}).join(', ')));
+    sb.appendChild(w)});
+}
+document.getElementById('new').onclick=function(){
+  var total=0,items=[];
+  ITEMS.forEach(function(it,i){if(qty[i]){items.push([it[0],it[1],qty[i]]);total+=it[1]*qty[i]}});
+  if(total>0){SALES.push({t:Date.now(),items:items,total:total});saveSales()}
+  qty=ITEMS.map(function(){return 0});given.value='';render();window.scrollTo(0,0)};
+var sveil=document.getElementById('sveil');
+document.getElementById('sbtn').onclick=function(){renderSales();sveil.className='veil show'};
+document.getElementById('sx').onclick=function(){sveil.className='veil'};
+sveil.onclick=function(e){if(e.target===sveil)sveil.className='veil'};
+
+/* ===== VOICE BILLING ===== */
+var NUMW={'ஒன்று':1,'ஒண்ணு':1,'ஒன்னு':1,'ஒரு':1,'ஒண்டு':1,'இரண்டு':2,'ரெண்டு':2,'இரெண்டு':2,'மூன்று':3,'மூணு':3,'மூனு':3,'நான்கு':4,'நாலு':4,'நாளு':4,'ஐந்து':5,'அஞ்சு':5,'ஆறு':6,'ஏழு':7,'எட்டு':8,'ஒன்பது':9,'ஒம்பது':9,'பத்து':10,'பதினைந்து':15,'இருபது':20,'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10};
+var FAMS=[
+{n:'1 இட்லி',k:['இட்லி','idli','idly']},
+{n:'வடை',k:['வடை','vada','vadai']},
+{n:'பூரி செட்',k:['பூரி','poori','puri']},
+{n:'பொங்கல்',k:['பொங்கல்','pongal']},
+{n:'1 தோசை',k:['தோசை','dosa','dosai']},
+{n:'2 இடியாப்பம்',k:['இடியாப்பம்','idiyappam']},
+{n:'டீ',k:['டீ','=டி','tea','chai','தேநீர்'],par:['டீ அரை பார்சல்','டீ 1 பார்சல்']},
+{n:'காபி',k:['காபி','காஃபி','coffee','kaapi'],par:['காபி அரை பார்சல்','காபி 1 பார்சல்']},
+{n:'Boost (பூஸ்ட்)',k:['பூஸ்ட்','boost']},
+{n:'Horlicks (ஹார்லிக்ஸ்)',k:['ஹார்லிக்ஸ்','horlicks']},
+{n:'பால்',k:['பால்','milk']},
+{n:'1 சப்பாத்தி',k:['சப்பாத்தி','chapati','chappathi']},
+{n:'புட்டு',k:['புட்டு','puttu']},
+{n:'பயறு',k:['பயறு','பயிறு']},
+{n:'1 கொழுக்கட்டை',k:['கொழுக்கட்டை','கொலுக்கட்டை']},
+{n:'1 சாப்பாடு',k:['சாப்பாடு','meals']},
+{n:'தக்காளி சாதம்',k:['தக்காளி','tomato']},
+{n:'தயிர் சாதம்',k:['தயிர்','curd']},
+{n:'புளி சாதம்',k:['புளி','tamarind']},
+{n:'முறுக்கு',k:['முறுக்கு','murukku']},
+{n:'பிஸ்கட்',k:['பிஸ்கட்','பிஸ்கெட்','biscuit'],bis:1},
+{n:'தண்ணீர் கேன் 1 லிட்டர்',k:['தண்ணீர்','=கேன்','=can','water'],water:1}
+];
+function numOf(t){if(/^\d+$/.test(t))return parseInt(t,10);return NUMW.hasOwnProperty(t)?NUMW[t]:null}
+function mt(t,k){return k.charAt(0)==='='?t===k.slice(1):t.indexOf(k)===0}
+function findIdx(name,price){for(var i=0;i<ITEMS.length;i++)if(ITEMS[i][0]===name&&(price==null||ITEMS[i][1]===price))return i;return -1}
+function parseVoice(text){
+  text=text.toLowerCase().replace(/1\s*\/\s*2/g,' அரை ').replace(/[.,!?;:।'"()]/g,' ');
+  text=text.replace(/(\d)([^\d\s])/g,'$1 $2').replace(/([^\d\s])(\d)/g,'$1 $2');
+  var tk=text.split(/\s+/).filter(Boolean),n=tk.length;
+  var neg=/வேண்டாம்|நீக்கு|குறை|remove|cancel/.test(text);
+  var fams=FAMS.slice();
+  for(var c=BASE.length;c<ITEMS.len
