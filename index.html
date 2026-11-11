@@ -254,16 +254,16 @@ sveil.onclick=function(e){if(e.target===sveil)sveil.className='veil'};
 var NUMW={'ஒன்று':1,'ஒண்ணு':1,'ஒன்னு':1,'ஒரு':1,'ஒண்டு':1,'இரண்டு':2,'ரெண்டு':2,'இரெண்டு':2,'மூன்று':3,'மூணு':3,'மூனு':3,'நான்கு':4,'நாலு':4,'நாளு':4,'ஐந்து':5,'அஞ்சு':5,'ஆறு':6,'ஏழு':7,'எட்டு':8,'ஒன்பது':9,'ஒம்பது':9,'பத்து':10,'பதினைந்து':15,'இருபது':20,'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,'eight':8,'nine':9,'ten':10};
 var FAMS=[
 {n:'1 இட்லி',k:['இட்லி','idli','idly']},
-{n:'வடை',k:['வடை','vada','vadai']},
-{n:'பூரி செட்',k:['பூரி','poori','puri']},
+{n:'வடை',k:['வடை','வடா','வட','vada','vadai','wada']},
+{n:'பூரி செட்',k:['பூரி','பூரீ','poori','puri']},
 {n:'பொங்கல்',k:['பொங்கல்','pongal']},
-{n:'1 தோசை',k:['தோசை','dosa','dosai']},
+{n:'1 தோசை',k:['தோசை','தோசா','தோச','dosa','dosai']},
 {n:'2 இடியாப்பம்',k:['இடியாப்பம்','idiyappam']},
-{n:'டீ',k:['டீ','=டி','tea','chai','தேநீர்'],par:['டீ அரை பார்சல்','டீ 1 பார்சல்']},
+{n:'டீ',k:['டீ','=டி','=டீய','tea','chai','தேநீர்'],par:['டீ அரை பார்சல்','டீ 1 பார்சல்']},
 {n:'காபி',k:['காபி','காஃபி','coffee','kaapi'],par:['காபி அரை பார்சல்','காபி 1 பார்சல்']},
 {n:'Boost (பூஸ்ட்)',k:['பூஸ்ட்','boost']},
 {n:'Horlicks (ஹார்லிக்ஸ்)',k:['ஹார்லிக்ஸ்','horlicks']},
-{n:'பால்',k:['பால்','milk']},
+{n:'பால்',k:['பால்','பாலு','paal','milk']},
 {n:'1 சப்பாத்தி',k:['சப்பாத்தி','chapati','chappathi']},
 {n:'புட்டு',k:['புட்டு','puttu']},
 {n:'பயறு',k:['பயறு','பயிறு']},
@@ -271,13 +271,41 @@ var FAMS=[
 {n:'1 சாப்பாடு',k:['சாப்பாடு','meals']},
 {n:'தக்காளி சாதம்',k:['தக்காளி','tomato']},
 {n:'தயிர் சாதம்',k:['தயிர்','curd']},
-{n:'புளி சாதம்',k:['புளி','tamarind']},
+{n:'புளி சாதம்',k:['புளி','புலி','tamarind']},
 {n:'முறுக்கு',k:['முறுக்கு','murukku']},
 {n:'பிஸ்கட்',k:['பிஸ்கட்','பிஸ்கெட்','biscuit'],bis:1},
 {n:'தண்ணீர் கேன் 1 லிட்டர்',k:['தண்ணீர்','=கேன்','=can','water'],water:1}
 ];
+var NV={'ஓரு':1,'ஒன்':1,'ஒன்றும்':1,'ரண்டு':2,'இரன்டு':2,'இரண்':2,'இரண்டும்':2,'மூன்':3,'மூன்றும்':3,'அஞ்சி':5,'ஐந்':5,'எழு':7,'ஒன்பத':9,'பதினொன்று':11,'பன்னிரண்டு':12,'இருவது':20,'பதினஞ்சு':15};
+for(var nk in NV)NUMW[nk]=NV[nk];
 function numOf(t){if(/^\d+$/.test(t))return parseInt(t,10);return NUMW.hasOwnProperty(t)?NUMW[t]:null}
-function mt(t,k){return k.charAt(0)==='='?t===k.slice(1):t.indexOf(k)===0}
+var SK={'த':'T','ட':'T','ர':'R','ற':'R','ல':'L','ள':'L','ழ':'L','ன':'N','ண':'N','ந':'N','ங':'N','ஞ':'N','ச':'S','ஸ':'S','ஜ':'S','ஷ':'S','ஹ':'H'};
+function skel(t){
+  var o='',p='';
+  for(var i=0;i<t.length;i++){
+    var c=t.charAt(i),code=c.charCodeAt(0),r;
+    if(code>=0x0BBE&&code<=0x0BCD)continue;
+    if(code>=0x0B85&&code<=0x0B94)r='a';
+    else if(SK[c])r=SK[c];
+    else if(code>=0x0B95&&code<=0x0BB9)r=c;
+    else continue;
+    if(r!==p)o+=r;p=r;
+  }
+  return o;
+}
+var TA=/[\u0B80-\u0BFF]/;
+function mt0(t,k){return k.charAt(0)==='='?t===k.slice(1):t.indexOf(k)===0}
+function mt1(t,k){
+  if(k.charAt(0)==='='||!TA.test(k)||!TA.test(t))return false;
+  var b=skel(k);if(b.length<3)return false;
+  return skel(t).indexOf(b)===0;
+}
+function famFor(t,fams){
+  var a,b;
+  for(a=0;a<fams.length;a++)for(b=0;b<fams[a].k.length;b++)if(mt0(t,fams[a].k[b]))return fams[a];
+  for(a=0;a<fams.length;a++)for(b=0;b<fams[a].k.length;b++)if(mt1(t,fams[a].k[b]))return fams[a];
+  return null;
+}
 function findIdx(name,price){for(var i=0;i<ITEMS.length;i++)if(ITEMS[i][0]===name&&(price==null||ITEMS[i][1]===price))return i;return -1}
 function parseVoice(text){
   text=text.toLowerCase().replace(/1\s*\/\s*2/g,' அரை ').replace(/[.,!?;:।'"()]/g,' ');
@@ -290,7 +318,7 @@ function parseVoice(text){
   tk.forEach(function(t,i){
     if(/^\d+$/.test(t))return;
     var f=null;
-    for(var a=0;a<fams.length&&!f;a++)for(var b=0;b<fams[a].k.length;b++)if(mt(t,fams[a].k[b])){f=fams[a];break}
+    f=famFor(t,fams);
     if(!f)return;
     var last=hits[hits.length-1];
     if(last&&last.f===f&&i-last.e<=1)last.e=i;else hits.push({f:f,s:i,e:i});
@@ -338,7 +366,7 @@ function handleSpeech(t){
   if(!r.out.length){say('❌ புரியலை: '+t,'bad');return}
   r.out.forEach(function(x){qty[x.i]=Math.max(0,qty[x.i]+(r.neg?-x.q:x.q))});
   render();
-  say((r.neg?'➖ ':'✔ ')+r.out.map(function(x){return x.q+' '+ITEMS[x.i][0]}).join(', '),'ok');
+  say((r.neg?'➖ ':'✔ ')+r.out.map(function(x){return x.q+' '+ITEMS[x.i][0]}).join(', ')+'  (கேட்டது: '+t+')','ok');
 }
 function stopVoice(){listening=false;mic.className='fab';try{rec&&rec.stop()}catch(e){}}
 function errMsg(c){
@@ -348,20 +376,30 @@ function errMsg(c){
 function startVoice(){
   if(!SR){say('❌ Intha browser la voice support illa. Chrome use pannunga','bad');return}
   if(listening)return;
-  var got=false;
-  rec=new SR();rec.lang=lang;rec.continuous=false;rec.interimResults=false;rec.maxAlternatives=1;
-  rec.onresult=function(e){for(var i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal){got=true;handleSpeech(e.results[i][0].transcript)}};
+  var got=false,last='';
+  rec=new SR();rec.lang=lang;rec.continuous=false;rec.interimResults=true;rec.maxAlternatives=1;
+  rec.onresult=function(e){
+    for(var i=e.resultIndex;i<e.results.length;i++){
+      var tr=e.results[i][0].transcript;
+      if(e.results[i].isFinal){if(!got){got=true;handleSpeech(tr)}}
+      else{last=tr;say('🎤 '+tr,'')}
+    }
+  };
   rec.onerror=function(e){
     if(e.error==='no-speech'||e.error==='aborted')return;
     got=true;listening=false;mic.className='fab';say('❌ '+errMsg(e.error)+' ['+e.error+']','bad');
   };
-  rec.onend=function(){listening=false;mic.className='fab';if(!got)say('🎤 பிடிச்சிட்டே பேசுங்க, விட்டா சேரும்','')};
+  rec.onend=function(){
+    listening=false;mic.className='fab';
+    if(!got&&last){got=true;handleSpeech(last)}
+    else if(!got)say('🎤 கேக்கல, பிடிச்சிட்டே பேசுங்க','');
+  };
   listening=true;mic.className='fab on';say('🎤 பேசுங்க…','');
   try{rec.start()}catch(x){listening=false;mic.className='fab';say('❌ Voice start aagala ['+x.name+']','bad')}
 }
 function endHold(){if(listening){try{rec.stop()}catch(e){}}}
-mic.onpointerdown=function(e){e.preventDefault();startVoice()};
-mic.onpointerup=endHold;mic.onpointerleave=endHold;mic.onpointercancel=endHold;
+mic.onpointerdown=function(e){e.preventDefault();try{mic.setPointerCapture(e.pointerId)}catch(x){}startVoice()};
+mic.onpointerup=endHold;mic.onpointercancel=endHold;
 mic.oncontextmenu=function(e){e.preventDefault()};
 vl.onclick=function(){lang=lang==='ta-IN'?'en-IN':'ta-IN';vl.textContent=lang==='ta-IN'?'தமிழ்':'English'};
 say('🎤 Mic ah பிடிச்சிட்டே பேசுங்க, விட்டா சேரும்','');setTimeout(function(){if(!listening)vs.className='vs'},5000);
