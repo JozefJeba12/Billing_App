@@ -104,14 +104,6 @@ h1{margin:0;font-size:26px;font-weight:800;letter-spacing:.5px}
 .vs.bad #vt{color:#ff9a90}
 .vs button{background:#ffd75e;color:#22332b;border-radius:8px;padding:6px 10px;font-weight:800;font-size:14px}
 @media(min-width:821px){.fab{bottom:24px}.vs{bottom:30px;left:auto;width:420px}}
-
-.fab2{position:fixed;right:28px;bottom:calc(174px + env(safe-area-inset-bottom,0px));width:52px;height:52px;border-radius:50%;background:#22332b;color:#ffd75e;font-size:24px;z-index:7;border:3px solid #7a5230;box-shadow:0 4px 10px rgba(0,0,0,.35)}
-.tb{position:fixed;left:12px;right:98px;bottom:calc(98px + env(safe-area-inset-bottom,0px));display:none;gap:6px;z-index:8}
-.tb.show{display:flex}
-.tb input{flex:1;min-width:0;font:inherit;font-size:18px;padding:12px;border-radius:12px;border:3px solid #ffd75e;background:#fffdf6;color:#2a2118}
-.tb button{background:#ffd75e;color:#22332b;font-weight:800;border-radius:12px;padding:0 14px;font-size:16px}
-body.tbon .vs{bottom:calc(166px + env(safe-area-inset-bottom,0px))}
-@media(min-width:821px){.fab2{bottom:108px}.tb{bottom:30px;left:auto;width:420px}body.tbon .vs{bottom:100px}}
 </style>
 </head>
 <body>
@@ -137,8 +129,6 @@ body.tbon .vs{bottom:calc(166px + env(safe-area-inset-bottom,0px))}
   </div>
 </div>
 <button class="fab" id="mic" aria-label="Voice billing">🎤</button>
-<button class="fab2" id="kb" aria-label="Keyboard voice">⌨️</button>
-<div class="tb" id="tb"><input id="ti" type="text" placeholder="Keyboard la 🎤 tap panni pesunga"><button id="tg">சேர்</button></div>
 <div class="vs" id="vs"><span id="vt"></span><button id="vl">தமிழ்</button></div>
 <div class="veil" id="sveil"><div class="drawer">
   <div class="dh"><h2>📊 இன்றைய விற்பனை</h2><button class="xx" id="sx" aria-label="மூடு">✕</button></div>
@@ -294,4 +284,24 @@ function parseVoice(text){
   var tk=text.split(/\s+/).filter(Boolean),n=tk.length;
   var neg=/வேண்டாம்|நீக்கு|குறை|remove|cancel/.test(text);
   var fams=FAMS.slice();
-  for(var c=BASE.length;c<ITEMS.len
+  for(var c=BASE.length;c<ITEMS.length;c++){var w=ITEMS[c][0].toLowerCase().split(/\s+/)[0];if(w.length>=2)fams.push({n:ITEMS[c][0],k:[w],p:ITEMS[c][1]})}
+  var num=tk.map(numOf),used=[],hits=[];
+  tk.forEach(function(t,i){
+    if(/^\d+$/.test(t))return;
+    var f=null;
+    for(var a=0;a<fams.length&&!f;a++)for(var b=0;b<fams[a].k.length;b++)if(mt(t,fams[a].k[b])){f=fams[a];break}
+    if(!f)return;
+    var last=hits[hits.length-1];
+    if(last&&last.f===f&&i-last.e<=1)last.e=i;else hits.push({f:f,s:i,e:i});
+  });
+  var out=[];
+  hits.forEach(function(h,hi){
+    var pe=hi?hits[hi-1].e:-1,ns=hi<hits.length-1?hits[hi+1].s:n;
+    var bl=Math.max(pe+1,h.s-3),ah=Math.min(ns-1,h.e+4);
+    function find(pred){var j;for(j=h.e+1;j<=ah;j++)if(!used[j]&&pred(tk[j]))return j;for(j=h.s-1;j>=bl;j--)if(!used[j]&&pred(tk[j]))return j;return -1}
+    var name=h.f.n,price=h.f.p;
+    if(h.f.par){
+      var pj=find(function(t){return /^(பார்சல்|பார்சல|parcel)/.test(t)});
+      if(pj>=0){used[pj]=true;
+        var hj=find(function(t){return t==='அரை'||t==='half'});
+        if(
