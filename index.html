@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ஆனஸ்ட்ராஜ்</title>
+<title>Billing App</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--page:#e9dcc3;--ptext:#3b2a1a}
@@ -94,7 +94,7 @@ h1{margin:0;font-size:26px;font-weight:800;letter-spacing:.5px}
 .bar b{font-size:26px;color:#ffd75e}
 .bar a{background:#ffd75e;color:#22332b;text-decoration:none;font-weight:800;padding:12px 18px;border-radius:12px;font-size:17px}
 
-.fab{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;position:fixed;right:16px;bottom:calc(92px + env(safe-area-inset-bottom,0px));width:72px;height:72px;border-radius:50%;background:#e8590c;color:#fff;font-size:34px;z-index:7;box-shadow:0 5px 14px rgba(0,0,0,.4);border:4px solid #fff7ec}
+.fab{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;position:fixed;right:16px;bottom:calc(92px + env(safe-area-inset-bottom,0px));width:72px;height:72px;border-radius:50%;background:#e8590c;color:#fff;font-size:34px;z-index:7;box-shadow:0 5px 14px rgba(0,0,0,.4);border:4px solid #fff7ec}
 .fab.on{background:#d1342a;animation:pl 1.2s infinite}
 @keyframes pl{0%{box-shadow:0 0 0 0 rgba(209,52,42,.6)}100%{box-shadow:0 0 0 22px rgba(209,52,42,0)}}
 .vs{position:fixed;left:12px;right:98px;bottom:calc(98px + env(safe-area-inset-bottom,0px));background:#22332b;color:#f6f1e3;border:3px solid #7a5230;border-radius:14px;padding:10px 12px;z-index:7;display:none;align-items:center;gap:8px;font-size:17px;line-height:1.35}
@@ -108,7 +108,7 @@ h1{margin:0;font-size:26px;font-weight:800;letter-spacing:.5px}
 </style>
 </head>
 <body>
-<div class="top"><h1>☕ ஆனஸ்ட்ராஜ்</h1><button class="sbtn" id="sbtn">📊 இன்றைய விற்பனை</button></div>
+<div class="top"><h1>☕ Billing App</h1><button class="sbtn" id="sbtn">📊 இன்றைய விற்பனை</button></div>
 <div class="wrap">
   <div class="board"><h2>~ மெனு ~</h2><div id="menu"></div>
     <button class="addb" id="addb">＋ புது பொருள் சேர்</button>
@@ -244,7 +244,8 @@ document.getElementById('new').onclick=function(){
   var total=0,items=[];
   ITEMS.forEach(function(it,i){if(qty[i]){items.push([it[0],it[1],qty[i]]);total+=it[1]*qty[i]}});
   if(total>0){SALES.push({t:Date.now(),items:items,total:total});saveSales()}
-  qty=ITEMS.map(function(){return 0});given.value='';render();window.scrollTo(0,0)};
+  qty=ITEMS.map(function(){return 0});given.value='';render();window.scrollTo(0,0);
+  stopVoice()};
 var sveil=document.getElementById('sveil');
 document.getElementById('sbtn').onclick=function(){renderSales();sveil.className='veil show'};
 document.getElementById('sx').onclick=function(){sveil.className='veil'};
@@ -359,7 +360,7 @@ function parseVoice(text){
   return {out:out,neg:neg};
 }
 var vs=document.getElementById('vs'),vt=document.getElementById('vt'),mic=document.getElementById('mic'),vl=document.getElementById('vl');
-var SR=window.SpeechRecognition||window.webkitSpeechRecognition,rec=null,listening=false,lang='ta-IN';
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition,rec=null,active=false,lang='ta-IN';
 function say(m,c){vs.className='vs show'+(c?' '+c:'');vt.textContent=m}
 function handleSpeech(t){
   var r=parseVoice(t);
@@ -368,44 +369,61 @@ function handleSpeech(t){
   render();
   say((r.neg?'➖ ':'✔ ')+r.out.map(function(x){return x.q+' '+ITEMS[x.i][0]}).join(', ')+'  (கேட்டது: '+t+')','ok');
 }
-function stopVoice(){listening=false;mic.className='fab';try{rec&&rec.stop()}catch(e){}}
 function errMsg(c){
   var m={'not-allowed':'Mic block aagiduchu. Browser settings la Site permissions > Microphone > Allow pannunga','service-not-allowed':'Intha browser la voice service illa. Chrome use pannunga','audio-capture':'Mic kedaikkala / vera app use panrudhu','network':'Internet check pannunga (voice ku net venum)','language-not-supported':'Intha language support illa, English button tap pannunga'};
   return m[c]||('Voice error: '+c);
 }
-function startVoice(){
-  if(!SR){say('❌ Intha browser la voice support illa. Chrome use pannunga','bad');return}
-  if(listening)return;
+/* ஒரு தடவை tap -> "புது பில்" அழுத்தும் வரை தொடர்ந்து கேட்கும் */
+function stopVoice(){
+  var was=active;
+  active=false;mic.className='fab';
+  var r=rec;rec=null;
+  try{r&&r.abort()}catch(e){}
+  if(was)say('🎤 Mic நின்னுடுச்சு','');
+}
+function listen(){
+  if(!active)return;
   var got=false,last='';
-  rec=new SR();rec.lang=lang;rec.continuous=false;rec.interimResults=true;rec.maxAlternatives=1;
-  rec.onresult=function(e){
+  var r=new SR();rec=r;
+  r.lang=lang;r.continuous=false;r.interimResults=true;r.maxAlternatives=1;
+  r.onresult=function(e){
     for(var i=e.resultIndex;i<e.results.length;i++){
       var tr=e.results[i][0].transcript;
       if(e.results[i].isFinal){if(!got){got=true;handleSpeech(tr)}}
       else{last=tr;say('🎤 '+tr,'')}
     }
   };
-  rec.onerror=function(e){
+  r.onerror=function(e){
     if(e.error==='no-speech'||e.error==='aborted')return;
-    got=true;listening=false;mic.className='fab';say('❌ '+errMsg(e.error)+' ['+e.error+']','bad');
+    active=false;mic.className='fab';rec=null;
+    say('❌ '+errMsg(e.error)+' ['+e.error+']','bad');
   };
-  rec.onend=function(){
-    listening=false;mic.className='fab';
-    if(!got&&last){got=true;handleSpeech(last)}
-    else if(!got)say('🎤 கேக்கல, பிடிச்சிட்டே பேசுங்க','');
+  r.onend=function(){
+    if(rec!==r)return;
+    if(!got&&last)handleSpeech(last);
+    if(active)setTimeout(listen,150);
+    else mic.className='fab';
   };
-  listening=true;mic.className='fab on';say('🎤 பேசுங்க…','');
-  try{rec.start()}catch(x){listening=false;mic.className='fab';say('❌ Voice start aagala ['+x.name+']','bad')}
+  try{r.start()}catch(x){
+    active=false;mic.className='fab';rec=null;
+    say('❌ Voice start aagala ['+x.name+']','bad');
+  }
 }
-function endHold(){if(listening){try{rec.stop()}catch(e){}}}
-mic.onpointerdown=function(e){e.preventDefault();try{mic.setPointerCapture(e.pointerId)}catch(x){}startVoice()};
-mic.onpointerup=endHold;mic.onpointercancel=endHold;
+function startVoice(){
+  if(!SR){say('❌ Intha browser la voice support illa. Chrome use pannunga','bad');return}
+  if(active)return;
+  active=true;mic.className='fab on';say('🎤 பேசுங்க…','');
+  listen();
+}
+mic.onclick=function(){if(active)stopVoice();else startVoice()};
 mic.oncontextmenu=function(e){e.preventDefault()};
-vl.onclick=function(){lang=lang==='ta-IN'?'en-IN':'ta-IN';vl.textContent=lang==='ta-IN'?'தமிழ்':'English'};
-say('🎤 Mic ah பிடிச்சிட்டே பேசுங்க, விட்டா சேரும்','');setTimeout(function(){if(!listening)vs.className='vs'},5000);
-
-
-
+vl.onclick=function(){
+  lang=lang==='ta-IN'?'en-IN':'ta-IN';
+  vl.textContent=lang==='ta-IN'?'தமிழ்':'English';
+  if(active){try{rec&&rec.abort()}catch(e){}}
+};
+say('🎤 Mic ah ஒரு தடவை tap பண்ணுங்க, புது பில் வர்ற வரை கேக்கும்','');
+setTimeout(function(){if(!active)vs.className='vs'},5000);
 
 render();
 </script>
