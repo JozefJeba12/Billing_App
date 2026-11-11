@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ஆனஸ்ட்ராஜ்</title>
+<title>Billing APP</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--page:#e9dcc3;--ptext:#3b2a1a}
@@ -104,6 +104,7 @@ h1{margin:0;font-size:26px;font-weight:800;letter-spacing:.5px}
 .vs.bad #vt{color:#ff9a90}
 .vs button{background:#ffd75e;color:#22332b;border-radius:8px;padding:6px 10px;font-weight:800;font-size:14px}
 @media(min-width:821px){.fab{bottom:24px}.vs{bottom:30px;left:auto;width:420px}}
+
 </style>
 </head>
 <body>
@@ -304,4 +305,76 @@ function parseVoice(text){
       var pj=find(function(t){return /^(பார்சல்|பார்சல|parcel)/.test(t)});
       if(pj>=0){used[pj]=true;
         var hj=find(function(t){return t==='அரை'||t==='half'});
-        if(
+        if(hj>=0){used[hj]=true;name=h.f.par[0]}else name=h.f.par[1]}
+    }
+    if(h.f.water){
+      var lj=find(function(t){return /^(லிட்டர்|லிட்|litre|liter)/.test(t)}),sz=1;
+      if(lj>=0){used[lj]=true;var sj=lj-1;
+        if(sj>=0&&!used[sj]){if(tk[sj]==='அரை'||tk[sj]==='half'){sz=0.5;used[sj]=true}else if(num[sj]!=null){sz=num[sj];used[sj]=true}}}
+      name=sz===0.5?'தண்ணீர் கேன் 1/2 லிட்டர்':sz===2?'தண்ணீர் கேன் 2 லிட்டர்':'தண்ணீர் கேன் 1 லிட்டர்';
+    }
+    if(h.f.bis){
+      price=5;
+      var rj=find(function(t){return /^(ரூபா|ருபா|rs|rupee)/.test(t)});
+      if(rj>=0){used[rj]=true;var p2=rj-1;
+        if(p2>=0&&!used[p2]&&num[p2]===10){price=10;used[p2]=true}
+        else if(p2>=0&&!used[p2]&&num[p2]===5){used[p2]=true}}
+    }
+    var q=null,j;
+    for(j=h.s-1;j>=bl;j--)if(!used[j]&&num[j]!=null){q=num[j];used[j]=true;break}
+    if(q===null)for(j=h.e+1;j<=ah;j++)if(!used[j]&&num[j]!=null){q=num[j];used[j]=true;break}
+    if(q===null)q=1;
+    q=Math.min(Math.max(Math.round(q),1),99);
+    var idx=findIdx(name,price);
+    if(idx>=0)out.push({i:idx,q:q});
+  });
+  return {out:out,neg:neg};
+}
+var vs=document.getElementById('vs'),vt=document.getElementById('vt'),mic=document.getElementById('mic'),vl=document.getElementById('vl');
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition,rec=null,listening=false,lang='ta-IN';
+function say(m,c){vs.className='vs show'+(c?' '+c:'');vt.textContent=m}
+function handleSpeech(t){
+  var r=parseVoice(t);
+  if(!r.out.length){say('❌ புரியலை: '+t,'bad');return}
+  r.out.forEach(function(x){qty[x.i]=Math.max(0,qty[x.i]+(r.neg?-x.q:x.q))});
+  render();
+  say((r.neg?'➖ ':'✔ ')+r.out.map(function(x){return x.q+' '+ITEMS[x.i][0]}).join(', '),'ok');
+}
+function stopVoice(){listening=false;mic.className='fab';try{rec&&rec.stop()}catch(e){}}
+var quick=0;
+function errMsg(c){
+  var m={'not-allowed':'Mic block aagiduchu. Browser settings la Site permissions > Microphone > Allow pannunga','service-not-allowed':'Intha browser la voice service illa. Link ah Chrome la open pannunga','audio-capture':'Mic kedaikkala / vera app use panrudhu','network':'Internet check pannunga (voice ku net venum)','language-not-supported':'Intha language support illa, English button tap pannunga'};
+  return m[c]||('Voice error: '+c);
+}
+function beginRec(){
+  rec=new SR();rec.lang=lang;rec.continuous=true;rec.interimResults=false;rec.maxAlternatives=1;
+  rec.onresult=function(e){for(var i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal)handleSpeech(e.results[i][0].transcript)};
+  rec.onerror=function(e){
+    if(e.error==='no-speech'||e.error==='aborted')return;
+    stopVoice();say('❌ '+errMsg(e.error)+' ['+e.error+']','bad');
+  };
+  rec.onend=function(){
+    if(!listening){mic.className='fab';return}
+    var now=Date.now();quick=(now-startedAt<1500)?quick+1:0;
+    if(quick>=4){stopVoice();say('❌ Voice start aagala. Link ah Chrome la open pannunga','bad');return}
+    startedAt=now;setTimeout(function(){if(listening){try{rec.start()}catch(x){}}},100);
+  };
+  startedAt=Date.now();
+  try{rec.start()}catch(x){stopVoice();say('❌ Voice start aagala ['+x.name+']','bad')}
+}
+var startedAt=0;
+function startVoice(){
+  if(!SR){say('❌ Intha browser la voice support illa. Chrome use pannunga','bad');return}
+  listening=true;quick=0;mic.className='fab on';
+  beginRec();say('🎤 சொல்லுங்க… (எ.கா: இரண்டு இட்லி ஒரு வடை)','');
+}
+mic.onclick=function(){if(listening){stopVoice();vs.className='vs'}else startVoice()};
+vl.onclick=function(){lang=lang==='ta-IN'?'en-IN':'ta-IN';vl.textContent=lang==='ta-IN'?'தமிழ்':'English';if(listening){stopVoice();setTimeout(startVoice,300)}};
+
+
+
+
+render();
+</script>
+</body>
+</html>
